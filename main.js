@@ -112,10 +112,15 @@ var options = {
 
 function a() {
 	if (el = document.getElementsByClassName("typing-wrapper")[0]) {
-		el.onchange = function(){
-			var text = document.querySelector("input").value;
+		el.onchange = function() {
+			console.log(el);
+			var textEl = document.querySelector("input");
+			var text   = textEl.value;
 			console.log(text);
-			functions.speak(text);
+			console.log(textEl.classList);
+			if (textEl.classList.contains("correct")) {
+				functions.speak(text);
+			}
 		};
 	}
 }
