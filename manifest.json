@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+
+  "name"        : "Memrise Speak",
+  "description" : "Speaks text on a memrise page",
+  "version"     : "1.0",
+  "icons"       : {"16":"text_small.png", "128": "text.png"},
+  
+  "browser_action": {
+    "default_title" : "Memrise",
+    "default_icon"  : "text.png",
+    "default_popup" : "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches" : ["http://www.memrise.com/course/*./*./*./garden/grow/","http://www.memrise.com/course/*/garden/grow/","http://www.memrise.com/course/*/garden/water/","http://www.memrise.com/course/*/garden/review/"],
+      "js"      : ["main.js"]
+    }
+  ],
+  "permissions" : [
+	"storage",
+	"tts"
+  ],
+  "background": {
+	"scripts": ["tts.js"],
+	"persistent": false
+  }
+}
