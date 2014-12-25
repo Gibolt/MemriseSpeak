@@ -2,23 +2,21 @@
   "manifest_version": 2,
 
   "name"        : "Memrise Speak",
-  "description" : "Speaks text on a memrise page",
+  "description" : "Speaks text on a memrise page where none was before",
   "version"     : "1.0",
-  "icons"       : {"16":"text_small.png", "128": "text.png"},
+  "icons"       : {"16":"memrise.png", "128": "memrise.png"},
   
   "browser_action": {
-    "default_title" : "Memrise",
-    "default_icon"  : "text.png",
-    "default_popup" : "popup.html"
+    "default_title" : "Memrise Speaks",
+    "default_icon"  : "text.png"
   },
   "content_scripts": [
     {
-      "matches" : ["http://www.memrise.com/course/*./*./*./garden/grow/","http://www.memrise.com/course/*/garden/grow/","http://www.memrise.com/course/*/garden/water/","http://www.memrise.com/course/*/garden/review/"],
+      "matches" : ["http://www.memrise.com/course/*./*./*./garden/grow/","http://www.memrise.com/course/*/garden/grow/","http://www.memrise.com/course/*/garden/water/","http://www.memrise.com/course/*/garden/review/","http://www.memrise.com/course/*/garden/review-difficult-things/"],
       "js"      : ["main.js"]
     }
   ],
   "permissions" : [
-	"storage",
 	"tts"
   ],
   "background": {
