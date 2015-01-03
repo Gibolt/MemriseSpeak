@@ -8,7 +8,8 @@
   
   "browser_action": {
     "default_title" : "Memrise Speaks",
-    "default_icon"  : "memrise.png"
+    "default_icon"  : "memrise.png",
+	"default_popup" : "popup.html"
   },
   "content_scripts": [
     {
@@ -17,7 +18,8 @@
     }
   ],
   "permissions" : [
-	"tts"
+	"tts",
+	"storage"
   ],
   "background": {
 	"scripts": ["tts.js"],
