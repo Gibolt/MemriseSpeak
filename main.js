@@ -132,11 +132,26 @@ function wordBoxResponse() {
 }
 
 var timer = {
+	interval : {
+		set : false,
+	},
 	setIntervals: function() {
-		setInterval(functions.speakIfFresh, 500);
-		setInterval(typingResponse, 200);
-		setInterval(selectionResponse, 50);
-		setInterval(wordBoxResponse, 50);
+		if (!timer.set) {
+			timer.set = true;
+			timer.interval.fresh  = setInterval(functions.speakIfFresh, 500);
+			timer.interval.type   = setInterval(typingResponse, 200);
+			timer.interval.select = setInterval(selectionResponse, 50);
+			timer.interval.words  = setInterval(wordBoxResponse, 50);
+		}
+	},
+	endIntervals: function() {
+		if (timer.set && ) {
+			timer.set = false;
+			if (timer.interval.fresh)  clearInterval(timer.interval.fresh);
+			if (timer.interval.type)   clearInterval(timer.interval.type);
+			if (timer.interval.select) clearInterval(timer.interval.select);
+			if (timer.interval.words)  clearInterval(timer.interval.words);
+		}
 	},
 };
 
@@ -144,6 +159,7 @@ chrome.runtime.onMessage.addListener(function (req) {
 	if (req.type == "activate") {
 		console.log(req);
 		tts.change(req);
+		init();
 	}
 });
 
@@ -151,6 +167,9 @@ function init() {
 	if (active) {
 		console.log("Begin Program");
 		timer.setIntervals();
+	}
+	else {
+		timer.endIntervals();
 	}
 }
 
