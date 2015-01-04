@@ -136,7 +136,7 @@ var languages = {
 	Russian: "ru",
 	"Scots Gaelic": "gd",
 	Serbian: "sr",
-	Serbo-Croatian: "sh",
+	"Serbo-Croatian": "sh",
 	Sesotho: "st",
 	Setswana: "tn",
 	"Seychellois Creole": "crs",

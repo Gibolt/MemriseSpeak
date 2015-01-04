@@ -14,14 +14,16 @@ var tts = {
 		set.volume = mod.volume || set.volume;
 	},
 	speak: function(text, lang) {
+		var detLang = functions.convertLang(determineLanguage());
 		text = text || variable.text;
-		lang = lang || variable.lang || "zh-CN";
+		lang = lang || detLang || variable.lang || "zh-CN";
 		console.log("Saying: " + text + " in " + lang);
 		chrome.runtime.sendMessage({type:"tts", text:text, lang:lang, set:set});
 	},
 }
 
 var functions = {
+	// Speak on show new or missed word
 	speakIfFresh: function() {
 		if (functions.testNewWord()) {
 			console.log("New/Failed Word");
@@ -89,6 +91,7 @@ function selectionResponse() {
 	}
 }
 
+// Speak correct answer on select multi-part
 function wordBoxResponse() {
 	var el = document.querySelector(".word-box-response.correct");
 	if (el && !el.set) {
@@ -102,6 +105,21 @@ function wordBoxResponse() {
 			console.log("Multiple Selection");
 			tts.speak(text);
 		}
+	}
+}
+
+function determineLanguage() {
+	if (col = document.querySelector("[class='column-label']")) {
+		console.log(col.innerText);
+		return col.innerText;
+	}
+	else if (row = document.querySelector("[class='row-label']")) {
+		console.log(row.innerText);
+		return row.innerText;
+	}
+	else {
+		console.log("Lang not found");
+		return "";
 	}
 }
 
