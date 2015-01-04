@@ -8,7 +8,7 @@ var variable = {
 
 var tts = {
 	change: function(mod) {
-		set.active = mod.active || set.active;
+		set.active = (mod.active === false) ? false : true;
 		set.voice  = mod.voice  || set.voice;
 		set.rate   = mod.rate   || set.rate;
 		set.volume = mod.volume || set.volume;
@@ -17,7 +17,6 @@ var tts = {
 		text = text || variable.text;
 		lang = lang || variable.lang || "zh-CN";
 		console.log("Saying: " + text + " in " + lang);
-		console.log(set);
 		chrome.runtime.sendMessage({type:"tts", text:text, lang:lang, set:set});
 	},
 }
@@ -49,11 +48,7 @@ var functions = {
 
 	convertLang: function(lang) {
 		lang = lang || variable.lang;
-		var conversion = {
-			English: "en",
-			Chinese: "zh-CN",
-		}
-		variable.lang = conversion[lang];
+		variable.lang = languages[lang];
 		return variable.lang;
 	},
 
@@ -124,7 +119,7 @@ var timer = {
 		}
 	},
 	endIntervals: function() {
-		if (timer.set && ) {
+		if (timer.set) {
 			timer.set = false;
 			if (timer.interval.fresh)  clearInterval(timer.interval.fresh);
 			if (timer.interval.type)   clearInterval(timer.interval.type);
@@ -156,6 +151,5 @@ getValue(["active", "rate", "volume"], function (val) {
 	set.active = (val.active === false) ? false : true;
 	set.rate   = val.rate   || set.rate;
 	set.volume = val.volume || set.volume;
-	console.log(set.active);
 	init();
 });
