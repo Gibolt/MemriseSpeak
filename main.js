@@ -1,4 +1,3 @@
-var active = true;
 var variable = {
 	el   : null,
 	go   : false,
@@ -7,39 +6,19 @@ var variable = {
 	regex: new RegExp("\\s", "g"),
 };
 
-function getValue(key, fn) {
-	chrome.storage.sync.get(key, function(value) {
-		fn(value);
-	});
-}
-
-function setValue(key, value) {
-	var obj = {}; obj[key] = value;
-	setValues(obj);
-}
-
-function setValues(obj) {
-	chrome.storage.sync.set(obj);
-}
-
 var tts = {
-	set : {
-		voice  : 1,
-		rate   : 1,
-		volume : 1,
-	},
-	change: function(set) {
-		active = set.on || active;
-		this.set.voice  = set.voice  || this.set.voice;
-		this.set.rate   = set.rate   || this.set.rate;
-		this.set.volume = set.volume || this.set.volume;
+	change: function(mod) {
+		set.active = mod.active || set.active;
+		set.voice  = mod.voice  || set.voice;
+		set.rate   = mod.rate   || set.rate;
+		set.volume = mod.volume || set.volume;
 	},
 	speak: function(text, lang) {
 		text = text || variable.text;
 		lang = lang || variable.lang || "zh-CN";
 		console.log("Saying: " + text + " in " + lang);
-		console.log(this.set);
-		chrome.runtime.sendMessage({type:"tts", text:text, lang:lang, set:this.set});
+		console.log(set);
+		chrome.runtime.sendMessage({type:"tts", text:text, lang:lang, set:set});
 	},
 }
 
@@ -164,7 +143,7 @@ chrome.runtime.onMessage.addListener(function (req) {
 });
 
 function init() {
-	if (active) {
+	if (set.active) {
 		console.log("Begin Program");
 		timer.setIntervals();
 	}
@@ -174,9 +153,9 @@ function init() {
 }
 
 getValue(["active", "rate", "volume"], function (val) {
-	active = (val.active === false) ? false : true;
-	tts.set.rate   = val.rate   || tts.set.rate;
-	tts.set.volume = val.volume || tts.set.volume;
-	console.log(active);
+	set.active = (val.active === false) ? false : true;
+	set.rate   = val.rate   || set.rate;
+	set.volume = val.volume || set.volume;
+	console.log(set.active);
 	init();
 });

@@ -1,27 +1,5 @@
 // Copyright 2014 Thomas Reese
-var def = {
-	active : true,
-	voice  : 1,
-	rate   : 1,
-	volume : 1,
-};
-
 var el = {};
-
-function getValue(key, fn) {
-	chrome.storage.sync.get(key, function(value) {
-		fn(value);
-	});
-}
-
-function setValue(key, value) {
-	var obj = {}; obj[key] = value;
-	setValues(obj);
-}
-
-function setValues(obj) {
-	chrome.storage.sync.set(obj);
-}
 
 function init() {
 	el.active = document.getElementById('active');
@@ -45,8 +23,8 @@ function clickSave() {
 
 function clickReset() {
 	if (confirm('Reset settings to default?')) {
-		setBoxes(def);
-		setValues(def);
+		setBoxes(set);
+		setValues(set);
 		activateSettings();
     }
 }
@@ -71,7 +49,7 @@ function setObj() {
 }
 
 function setBoxes(val) {
-	val = val || def;
+	val = val || set;
 	el.active.checked = val.active;
 	el.voice.value    = parseFloat(val.voice);
 	el.rate.value     = parseFloat(val.rate);
@@ -79,11 +57,11 @@ function setBoxes(val) {
 }
 
 function validateRate() {
-	validateNumberElement(el.rate, .1, 3, def.rate);
+	validateNumberElement(el.rate, .1, 3, set.rate);
 }
 
 function validateVolume() {
-	validateNumberElement(el.volume, .1, 1, def.volume);
+	validateNumberElement(el.volume, .1, 1, set.volume);
 }
 
 function validateNumberElement(el, min, max, def) {
