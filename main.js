@@ -14,11 +14,13 @@ var tts = {
 		set.volume = mod.volume || set.volume;
 	},
 	speak: function(text, lang) {
-		var detLang = functions.convertLang(determineLanguage());
-		text = text || variable.text;
-		lang = lang || detLang || variable.lang || "zh-CN";
-		console.log("Saying: " + text + " in " + lang);
-		chrome.runtime.sendMessage({type:"tts", text:text, lang:lang, set:set});
+		if (!hasAudio()) {
+			var detLang = functions.convertLang(determineLanguage());
+			text = text || variable.text;
+			lang = lang || detLang || variable.lang || "zh-CN";
+			console.log("Saying: " + text + " in " + lang);
+			chrome.runtime.sendMessage({type:"tts", text:text, lang:lang, set:set});
+		}
 	},
 }
 
@@ -121,6 +123,10 @@ function determineLanguage() {
 		console.log("Lang not found");
 		return "";
 	}
+}
+
+function hasAudio() {
+	return document.querySelector(".audio-player");
 }
 
 var timer = {
