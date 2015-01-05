@@ -6,6 +6,14 @@ var variable = {
 	regex: new RegExp("\\s", "g"),
 };
 
+var course = {
+	uri  : document.baseURI,
+	id   : document.baseURI.split("/")[4],
+	code : document.baseURI.split("/")[5],
+	title: null,
+	lang : null,
+}
+
 var tts = {
 	change: function(mod) {
 		set.active = (mod.active === false) ? false : true;
@@ -140,6 +148,7 @@ var timer = {
 			timer.interval.type   = setInterval(typingResponse, 200);
 			timer.interval.select = setInterval(selectionResponse, 50);
 			timer.interval.words  = setInterval(wordBoxResponse, 50);
+			timer.interval.title  = setInterval(courseDetails, 500);
 		}
 	},
 	endIntervals: function() {
@@ -149,11 +158,25 @@ var timer = {
 			if (timer.interval.type)   clearInterval(timer.interval.type);
 			if (timer.interval.select) clearInterval(timer.interval.select);
 			if (timer.interval.words)  clearInterval(timer.interval.words);
+			if (timer.interval.title)  clearInterval(timer.interval.title);
 		}
 	},
 };
 
-chrome.runtime.onMessage.addListener(function (req) {
+function courseDetails() {
+	if (course.title) {
+		clearInterval(timer.interval.title);
+	}
+	else if (titleEl = document.getElementById("course-title")) {
+		course.title = titleEl.innerText;
+	}
+}
+
+chrome.runtime.onMessage.addListener(function (req, sender, res) {
+	if (req.type == "details") {
+		console.log(req);
+		res(course);
+	}
 	if (req.type == "activate") {
 		console.log(req);
 		tts.change(req);
@@ -171,7 +194,7 @@ function init() {
 	}
 }
 
-getValue(["active", "rate", "volume"], function (val) {
+getValue(["active", "rate", "volume", course.code], function (val) {
 	set.active = (val.active === false) ? false : true;
 	set.rate   = val.rate   || set.rate;
 	set.volume = val.volume || set.volume;

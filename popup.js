@@ -1,7 +1,9 @@
 // Copyright 2014 Thomas Reese
 var el = {};
+var course = {};
 
 function init() {
+	el.title  = document.getElementById('title');
 	el.active = document.getElementById('active');
 	el.voice  = document.getElementById('voice');
 	el.rate   = document.getElementById('rate');
@@ -9,6 +11,7 @@ function init() {
 	el.save   = document.getElementById('save');
 	el.reset  = document.getElementById('reset');
 
+	getCourseDetails();
 	el.save.addEventListener('click', clickSave, false);
 	el.reset.addEventListener('click', clickReset, false);
 }
@@ -36,6 +39,22 @@ function activateSettings() {
 		for (var i = 0; i < tabs.length; i++) {
 			chrome.tabs.sendMessage(tabs[i].id, obj);
 		}
+	});
+}
+
+function setTitle(title) {
+	if (title) {
+		el.title.innerText = title;
+	}
+}
+
+function getCourseDetails() {
+	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		chrome.tabs.sendMessage(tabs[0].id, {type:"details"}, function(res) {
+			course = res;
+			console.log(course);
+			setTitle(course.title);
+		});
 	});
 }
 
