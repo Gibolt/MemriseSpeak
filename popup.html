@@ -8,8 +8,13 @@
   <body>
     <text>Course: </text><text id="title"> None Loaded</text><br>
 
-    Active: <input type="checkbox" id="active" checked="true"/><br>
-    <select id="voice" hidden="true">Voice: </select><br>
+    Active: <input type="checkbox" id="active" checked="true"/><br><br>
+    <a id="langOuter" hidden="true">Language:
+      <select id="lang">
+        <option value=""> --- </option>
+	  </select><br>
+	</a>
+    <select id="voice" hidden="true">Voice: <br></select>
     Rate [.1-3]: <input type="number" id="rate" placeholder="[.1-3]"/><br>
     Volume [.1-1]: <input type="number" id="volume" placeholder="[.1-1]"/><br>
     <text hidden="true">Override: </text><input type="checkbox" id="override" checked="true" hidden="true"/><br>

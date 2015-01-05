@@ -5,6 +5,8 @@ var course = {};
 function init() {
 	el.title  = document.getElementById('title');
 	el.active = document.getElementById('active');
+	el.langOut= document.getElementById('langOuter');
+	el.lang   = document.getElementById('lang');
 	el.voice  = document.getElementById('voice');
 	el.rate   = document.getElementById('rate');
 	el.volume = document.getElementById('volume');
@@ -42,20 +44,53 @@ function activateSettings() {
 	});
 }
 
+function getCourseDetails() {
+	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		chrome.tabs.sendMessage(tabs[0].id, {type:"details"}, function(res) {
+			if (res) {
+				course = res;
+				console.log(course);
+				courseOptions();
+			}
+		});
+	});
+}
+
+function courseOptions() {
+	setTitle(course.title);
+	addLanguageOptions(el.lang);
+	el.langOut.hidden = false;
+	selectCurrentLang(el.lang);
+}
+
 function setTitle(title) {
 	if (title) {
 		el.title.innerText = title;
 	}
 }
 
-function getCourseDetails() {
-	chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		chrome.tabs.sendMessage(tabs[0].id, {type:"details"}, function(res) {
-			course = res;
-			console.log(course);
-			setTitle(course.title);
-		});
-	});
+function createOptions(text, value) {
+	var opt = document.createElement('option');
+	opt.innerText = text;
+	opt.value = value;
+	return opt;
+}
+
+function addLanguageOptions(el) {
+	el = el || el.lang;
+	for (var key in languages) {
+		el.appendChild(createOptions(key,key));
+	}
+}
+
+function selectCurrentLang(el) {
+	if (languages[course.lang]) {
+		el = el || el.lang;
+		var select = "[value='" + course.lang + "']";
+		if (opt = el.querySelector(select)) {
+			opt.checked = true;
+		}
+	}
 }
 
 function setObj() {
