@@ -20,6 +20,7 @@ var tts = {
 		set.voice  = mod.voice  || set.voice;
 		set.rate   = mod.rate   || set.rate;
 		set.volume = mod.volume || set.volume;
+		course.lang = mod.lang;
 	},
 	speak: function(text, lang) {
 		if (!hasAudio()) {
@@ -119,17 +120,28 @@ function wordBoxResponse() {
 }
 
 function determineLanguage() {
+	var lang;
 	if (col = document.querySelector("[class='column-label']")) {
 		console.log(col.innerText);
-		return col.innerText;
+		lang = col.innerText;
 	}
 	else if (row = document.querySelector("[class='row-label']")) {
 		console.log(row.innerText);
-		return row.innerText;
+		lang = row.innerText;
 	}
 	else {
 		console.log("Lang not found");
-		return "";
+		lang = "";
+	}
+	setDefaultLanguage(lang);
+	return lang;
+}
+
+function setDefaultLanguage(lang) {
+	if (!course.lang && languages[lang]) {
+		console.log("Default language set to: " + lang);
+		course.lang = lang;
+		saveCourse();
 	}
 }
 
@@ -194,7 +206,14 @@ function init() {
 	}
 }
 
+function loadCourseSettings(set) {
+	if (set) {
+		course.lang = set.lang;
+	}
+}
+
 getValue(["active", "rate", "volume", course.code], function (val) {
+	loadCourseSettings(val[course.code]);
 	set.active = (val.active === false) ? false : true;
 	set.rate   = val.rate   || set.rate;
 	set.volume = val.volume || set.volume;

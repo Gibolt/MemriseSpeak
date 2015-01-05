@@ -21,7 +21,9 @@ function init() {
 function clickSave() {
 	validateRate();
 	validateVolume();
+	validateLang();
 	var obj = setObj();
+	saveCourse();
 	setValues(obj);
 	activateSettings();
 }
@@ -86,9 +88,9 @@ function addLanguageOptions(el) {
 function selectCurrentLang(el) {
 	if (languages[course.lang]) {
 		el = el || el.lang;
-		var select = "[value='" + course.lang + "']";
+		var select = "[value=" + course.lang + "]";
 		if (opt = el.querySelector(select)) {
-			opt.checked = true;
+			opt.selected = true;
 		}
 	}
 }
@@ -96,6 +98,7 @@ function selectCurrentLang(el) {
 function setObj() {
 	var obj = {
 		active : el.active.checked,
+		lang   : course.lang,
 		rate   : parseFloat(el.rate.value),
 		volume : parseFloat(el.volume.value),
 	};
@@ -116,6 +119,12 @@ function validateRate() {
 
 function validateVolume() {
 	validateNumberElement(el.volume, .1, 1, set.volume);
+}
+
+function validateLang() {
+	if (languages[el.lang.value] || el.lang.value === "") {
+		course.lang = el.lang.value;
+	}
 }
 
 function validateNumberElement(el, min, max, def) {

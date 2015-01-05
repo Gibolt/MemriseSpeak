@@ -20,6 +20,10 @@ function setValues(obj) {
 	chrome.storage.sync.set(obj);
 }
 
+function saveCourse() {
+	setValue(course.code, course);
+}
+
 var languages = {
 	Afrikaans: "af",
 	Akan: "ak",
