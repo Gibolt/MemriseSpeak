@@ -24,9 +24,10 @@ var tts = {
 	},
 	speak: function(text, lang) {
 		if (!hasAudio()) {
-			var detLang = functions.convertLang(determineLanguage());
+			var detLang = determineLanguage();
 			text = text || variable.text;
 			lang = lang || detLang || variable.lang || "zh-CN";
+			lang = functions.convertLang(lang) || lang;
 			console.log("Saying: " + text + " in " + lang);
 			chrome.runtime.sendMessage({type:"tts", text:text, lang:lang, set:set});
 		}
@@ -89,15 +90,27 @@ function selectionResponse() {
 	var el = document.querySelector(".choice.correct");
 	if (el && !el.set) {
 		el.set = true;
+		var query = document.querySelectorAll("[class='column-label']");
 		var textEl = el.querySelector("[class='val bigger']");
-		if (textEl) {
+		if (query && query[0].innerText == course.lang) {
+			console.log("Selection Language Based Response");
+			tts.speak(el.querySelector(".val").innerText, course.lang);
+		}
+		else if (query && query[1].innerText == course.lang) {
+			if (header = document.querySelector(".qquestion")) {
+				console.log("Selection Language Based Header");
+				tts.speak(header.firstChild.nodeValue, course.lang);
+			}
+		}
+		// Likely to be phased out completely
+		else if (textEl) {
 			var text = textEl.innerText;
 			console.log("Selection Correct Option");
 			tts.speak(text);
 		}
 		else if (header = document.querySelector(".qquestion")) {
 			console.log("Selection Correct Header");
-			tts.speak(header.innerText);
+			tts.speak(header.firstChild.nodeValue);
 		}
 	}
 }
@@ -122,16 +135,17 @@ function wordBoxResponse() {
 function determineLanguage() {
 	var lang;
 	if (col = document.querySelector("[class='column-label']")) {
-		console.log(col.innerText);
 		lang = col.innerText;
 	}
 	else if (row = document.querySelector("[class='row-label']")) {
-		console.log(row.innerText);
 		lang = row.innerText;
 	}
 	else {
 		console.log("Lang not found");
 		lang = "";
+	}
+	if (lang !== course.lang) {
+		console.log(lang);
 	}
 	setDefaultLanguage(lang);
 	return lang;
