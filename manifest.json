@@ -3,7 +3,7 @@
 
   "name"        : "Memrise Speak",
   "description" : "Speaks text on a memrise page where none was before",
-  "version"     : "1.1",
+  "version"     : "1.2",
   "icons"       : {"16":"memrise.png", "128": "memrise.png"},
   
   "browser_action": {

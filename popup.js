@@ -3,15 +3,16 @@ var el = {};
 var course = {};
 
 function init() {
-	el.title  = document.getElementById('title');
-	el.active = document.getElementById('active');
-	el.langOut= document.getElementById('langOuter');
-	el.lang   = document.getElementById('lang');
-	el.voice  = document.getElementById('voice');
-	el.rate   = document.getElementById('rate');
-	el.volume = document.getElementById('volume');
-	el.save   = document.getElementById('save');
-	el.reset  = document.getElementById('reset');
+	el.title    = document.getElementById('title');
+	el.active   = document.getElementById('active');
+	el.langOut  = document.getElementById('langOuter');
+	el.lang     = document.getElementById('lang');
+	el.voiceOut = document.getElementById('voiceOuter');
+	el.voice    = document.getElementById('voice');
+	el.rate     = document.getElementById('rate');
+	el.volume   = document.getElementById('volume');
+	el.save     = document.getElementById('save');
+	el.reset    = document.getElementById('reset');
 
 	getCourseDetails();
 	el.save.addEventListener('click', clickSave, false);
@@ -62,6 +63,7 @@ function courseOptions() {
 	setTitle(course.title);
 	addLanguageOptions(el.lang);
 	el.langOut.hidden = false;
+//	addVoiceOptions();
 	selectCurrentLang(el.lang);
 }
 
@@ -82,6 +84,24 @@ function addLanguageOptions(el) {
 	el = el || el.lang;
 	for (var key in languages) {
 		el.appendChild(createOptions(key,key));
+	}
+}
+
+function addVoiceOptions() {
+	if (course.lang) {
+		chrome.tts.getVoices(function (voices) {
+			for (var i = 0; i < voices.length; i++) {
+				if (voices[i].lang && voices[i].lang.indexOf(languages[course.lang]) === 0) {
+					console.log(voices[i].lang.indexOf(languages[course.lang]));
+					console.log(voices[i].lang);
+					var title = voices[i].voiceName.indexOf(voices[i].gender) > 0 ? voices[i].voiceName : voices[i].voiceName + " (" + voices[i].gender + ")";
+					el.voice.appendChild(createOptions(title,i));
+				}
+			}
+			if (el.voice.length > 1) {
+				el.voiceOut.hidden = false;
+			}
+		});
 	}
 }
 

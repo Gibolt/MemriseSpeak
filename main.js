@@ -12,6 +12,7 @@ var course = {
 	code : document.baseURI.split("/")[5],
 	title: null,
 	lang : null,
+	voice: null,
 }
 
 var tts = {
