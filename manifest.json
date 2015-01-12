@@ -13,7 +13,7 @@
   },
   "content_scripts": [
     {
-      "matches" : ["http://www.memrise.com/course/*/garden/grow/","http://www.memrise.com/course/*/garden/water/","http://www.memrise.com/course/*/garden/overwater/","http://www.memrise.com/course/*/garden/review/","http://www.memrise.com/course/*/garden/review-difficult-things/"],
+      "matches" : ["http://www.memrise.com/course/*/garden/grow/","http://www.memrise.com/course/*/garden/water/","http://www.memrise.com/course/*/garden/overwater/","http://www.memrise.com/course/*/garden/review/","http://www.memrise.com/course/*/garden/review-difficult-things/","http://www.memrise.com/garden/*"],
       "js"      : ["globalFunctions.js", "main.js"]
     }
   ],

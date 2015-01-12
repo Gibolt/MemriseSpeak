@@ -7,5 +7,9 @@ chrome.runtime.onMessage.addListener(function (req) {
 });
 
 function tts(text, lang, rate, volume) {
-	chrome.tts.speak(text, {'lang':lang, 'rate':rate, 'volume':volume});
+	var specifics = {'rate':rate, 'volume':volume};
+	if (lang) {
+		specifics.lang = lang;
+	}
+	chrome.tts.speak(text, specifics);
 }

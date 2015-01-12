@@ -29,6 +29,9 @@ var tts = {
 			text = text || variable.text;
 			lang = lang || detLang || variable.lang || "zh-CN";
 			lang = functions.convertLang(lang) || lang;
+			if (lang == "Word" || lang == "Definition") {
+				lang = "";
+			}
 			console.log("Saying: " + text + " in " + lang);
 			chrome.runtime.sendMessage({type:"tts", text:text, lang:lang, set:set});
 		}
@@ -46,18 +49,41 @@ var functions = {
 		}
 	},
 
+	// speakIfFresh: function() {
+		// if (functions.testNewWord()) {
+			// console.log("New/Failed Word");
+			// functions.setWords();
+			// functions.convertLang();
+			// if (variable.)
+			// tts.speak();
+		// }
+	// },
+
 	testNewWord: function() {
-		var textEl = document.getElementsByClassName('row-value')[0];
-		variable.go = false;
-		if (textEl && (!variable.el || textEl.innerText != variable.el.innerText) && functions.replace(textEl.innerText) !== "") {
-			variable.go = true;
-			variable.el = textEl;
+		if (word = getWord()) {
+			variable.go = false;
+			if (word && (!variable.el || word != variable.el) && functions.replace(word) !== "") {
+				variable.go = true;
+				variable.el = word;
+				console.log("Word/Language Selection");
+			}
+		}
+		else {
+			var textEl = document.getElementsByClassName('row-value')[0];
+			variable.go = false;
+			if (textEl && (!variable.el || textEl.firstChild.nodeValue.trim() != variable.el) && functions.replace(textEl.innerText) !== "") {
+				variable.go = true;
+				variable.el = textEl.firstChild.nodeValue.trim();
+				console.log(variable.el);
+				console.log("Label Selection");
+			}
 		}
 		return variable.go;
 	},
 
 	setWords: function() {
-		variable.text = variable.el.innerText;
+//		var text = variable.el.firstChild.nodeValue;
+		variable.text = functions.replace(variable.el);
 		variable.lang = document.getElementsByClassName('row-label')[0].innerText;
 	},
 
@@ -68,7 +94,8 @@ var functions = {
 	},
 
 	replace: function(str) {
-		return str.replace(variable.regex, "");
+		return str.trim();
+//		return str.replace(variable.regex, "");
 	},
 };
 
@@ -93,14 +120,14 @@ function selectionResponse() {
 		el.set = true;
 		var query = document.querySelectorAll("[class='column-label']");
 		var textEl = el.querySelector("[class='val bigger']");
-		if (query && query[0].innerText == course.lang) {
+		if (query && (query[0].innerText == course.lang || query[0].innerText == "Word")) {
 			console.log("Selection Language Based Response");
 			tts.speak(el.querySelector(".val").innerText, course.lang);
 		}
-		else if (query && query[1].innerText == course.lang) {
+		else if (query && (query[1].innerText == course.lang || query[1].innerText == "Word")) {
 			if (header = document.querySelector(".qquestion")) {
 				console.log("Selection Language Based Header");
-				tts.speak(header.firstChild.nodeValue, course.lang);
+				tts.speak(functions.replace(header.firstChild.nodeValue), course.lang);
 			}
 		}
 		// Likely to be phased out completely
@@ -149,7 +176,7 @@ function determineLanguage() {
 		console.log(lang);
 	}
 	setDefaultLanguage(lang);
-	return lang;
+	return course.lang || lang;
 }
 
 function setDefaultLanguage(lang) {
@@ -158,6 +185,31 @@ function setDefaultLanguage(lang) {
 		course.lang = lang;
 		saveCourse();
 	}
+}
+
+function findWord() {
+	var els = document.getElementsByClassName("row-label");
+	var slot = null;
+	for (var i=0; i < els.length; i++) {
+		var context = els[i].innerText.trim().toLowerCase();
+		if (slot === null && context == "word") {
+			slot = i;
+		}
+		else if (context != "" && context === course.lang) {
+			slot = i;
+		}
+	}
+	return slot;
+}
+
+function getWord() {
+	var slot = findWord();
+	var word;
+	if (slot !== null && els) {
+		var els = document.getElementsByClassName("row-value");
+		word = els[slot].innerText.trim();
+	}
+	return word || null;
 }
 
 function hasAudio() {
@@ -222,7 +274,15 @@ function init() {
 }
 
 function loadCourseSettings(set) {
-	if (set) {
+	if (course.id == "water") {
+		for (var key in languages) {
+			if (languages[key].toLowerCase() === course.code.toLowerCase()) {
+				course.lang = languages[key];
+				console.log(course.lang);
+			}
+		}
+	}
+	else if (set) {
 		course.lang = set.lang;
 	}
 }
