@@ -3,7 +3,6 @@ var variable = {
 	go   : false,
 	lang : null,
 	text : null,
-	regex: new RegExp("\\s", "g"),
 };
 
 var course = {
@@ -24,7 +23,7 @@ var tts = {
 		course.lang = mod.lang;
 	},
 	speak: function(text, lang) {
-		if (!hasAudio()) {
+		if (!hasAudio() && !isMuted()) {
 			var detLang = determineLanguage();
 			text = text || variable.text;
 			lang = lang || detLang || variable.lang || "zh-CN";
@@ -44,20 +43,11 @@ var functions = {
 		if (functions.testNewWord()) {
 			console.log("New/Failed Word");
 			functions.setWords();
+			functions.appendAudioBox();
 			functions.convertLang();
 			tts.speak();
 		}
 	},
-
-	// speakIfFresh: function() {
-		// if (functions.testNewWord()) {
-			// console.log("New/Failed Word");
-			// functions.setWords();
-			// functions.convertLang();
-			// if (variable.)
-			// tts.speak();
-		// }
-	// },
 
 	testNewWord: function() {
 		if (word = getWord()) {
@@ -95,7 +85,25 @@ var functions = {
 
 	replace: function(str) {
 		return str.trim();
-//		return str.replace(variable.regex, "");
+	},
+
+	speakWord: function() {
+		tts.speak();
+	},
+
+	appendAudioBox: function() {
+		if (audio = document.getElementsByClassName("first-audio")[0]) {
+			if (row = audio.getElementsByClassName("row-value")[0]) {
+				if (row.children.length == 0) {
+					console.log()
+					var box = document.createElement('a');
+					box.className = "audio-player-hover audio-player";
+					box.onmouseenter = functions.speakWord;
+					box.added = true;
+					row.appendChild(box);
+				}
+			}
+		}
 	},
 };
 
@@ -213,7 +221,17 @@ function getWord() {
 }
 
 function hasAudio() {
-	return document.querySelector(".audio-player");
+	var audio = document.querySelector(".audio-player");
+	if (!audio) {
+		return false;
+	}
+	else {
+		return !audio.added;
+	}
+}
+
+function isMuted() {
+	return document.getElementsByClassName("audio-muted").length;
 }
 
 var timer = {
